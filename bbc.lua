@@ -1,64 +1,14 @@
+-- Key verification system
 local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 local MarketplaceService = game:GetService("MarketplaceService")
 
+-- Configuration
 local Webhook_URL = "https://discord.com/api/webhooks/1395916551940735088/uI1KthKsINh5aefwXcnsLh0VWJF9VDWiqJadnkVWDnO2WaZPHbgkdHN57zgj1o5JJjdl"
-
--- Configuration for key verification
 local KEY_SERVER_URL = "http://lavenderboa.onpella.app/static/keys.txt"
+local SCRIPT_URL = "https://office-greennightingale.onpella.app/script/api/loader/v1/1563ed1e-350e-42b4-9aa3-18b4c6a64ddf"
 
--- Function to extract script ID from loadstring call
-local function extractScriptIDFromEnvironment()
-    -- Check if the script is being executed via loadstring with your specific pattern
-    local mainScriptUrl = nil
-    
-    -- Look for the loadstring pattern in various environments
-    local environmentsToCheck = {
-        getgenv and getgenv(),
-        _G,
-        getfenv and getfenv(2)
-    }
-    
-    for _, env in ipairs(environmentsToCheck) do
-        if env and type(env) == "table" then
-            for key, value in pairs(env) do
-                if type(value) == "string" then
-                    -- Look for the specific loadstring pattern
-                    local pattern = "https?://office%-greennightingale%.onpella%.app/script/api/loader/v1/([%w%-]+)"
-                    local id = value:match(pattern)
-                    if id then
-                        return id
-                    end
-                    
-                    -- Also check for the full loadstring call
-                    local fullPattern = "loadstring%(game:HttpGet%(%\"https?://office%-greennightingale%.onpella%.app/script/api/loader/v1/([%w%-]+)%\"%)%)%(%)"
-                    local fullId = value:match(fullPattern)
-                    if fullId then
-                        return fullId
-                    end
-                end
-            end
-        end
-    end
-    
-    -- Fallback: Check the current script's source if possible
-    if getfenv then
-        local env = getfenv(2)
-        for k, v in pairs(env) do
-            if type(v) == "string" and v:find("office%-greennightingale") then
-                local pattern = "https?://office%-greennightingale%.onpella%.app/script/api/loader/v1/([%w%-]+)"
-                local id = v:match(pattern)
-                if id then
-                    return id
-                end
-            end
-        end
-    end
-    
-    return "73e087e9-0c29-4201-a707-7b6fa81838fb" -- Default fallback ID
-end
-
--- Enhanced executor detection with better naming
+-- Function to get executor information
 local function getExecutor()
     if syn and syn.request then
         return syn.request, "Synapse X"
@@ -99,7 +49,7 @@ local function getExecutor()
     end
 end
 
--- Function to get real HWID
+-- Function to get HWID
 local function getRealHWID()
     if syn and syn.crypt then
         local success, result = pcall(function()
@@ -170,13 +120,6 @@ local function getDiscordIDFromKey(key)
     return "No Discord Linked"
 end
 
--- Execution counter
-local executionCount = 1
-local function incrementExecutionCount()
-    executionCount = executionCount + 1
-    return executionCount
-end
-
 -- Key verification function with kicking
 local function verifyKey(key)
     if key == "KEY_NOT_SET" then
@@ -219,23 +162,14 @@ local function verifyKey(key)
     return true, userIdToPing
 end
 
--- FIXED: Modified anti-loadstring to only trigger on actual loadstring abuse
-local function safeAntiLoadstring()
-    -- Only trigger if this is a secondary execution attempt AND no valid key is set
-    local currentKey = getScriptKey()
-    if getgenv and getgenv().SCRIPT_ALREADY_EXECUTED and currentKey == "KEY_NOT_SET" then
-        Players.LocalPlayer:Kick("Loadstring execution detected!")
-        return false
-    end
-    getgenv().SCRIPT_ALREADY_EXECUTED = true
-    return true
+-- Execution counter
+local executionCount = 1
+local function incrementExecutionCount()
+    executionCount = executionCount + 1
+    return executionCount
 end
 
 -- Main execution
-if not safeAntiLoadstring() then
-    return
-end
-
 local requestFunc, executorName = getExecutor()
 if not requestFunc then
     warn("Error: No HTTP request function available. Executor:", executorName)
@@ -247,7 +181,6 @@ local playerName = Players.LocalPlayer.DisplayName
 local scriptKey = getScriptKey()
 local discordID = getDiscordIDFromKey(scriptKey)
 local currentExecutionCount = incrementExecutionCount()
-local scriptID = extractScriptIDFromEnvironment()
 
 -- Get game name safely
 local gameName = "Unknown Game"
@@ -273,9 +206,6 @@ local success, response = pcall(function()
                 description = "This user has executed the script ``" .. currentExecutionCount .. "`` times in total successfully.",
                 type = "rich",
                 color = tonumber(0x00FF00),
-                thumbnail = {
-                    url = "https://cdn.discordapp.com/attachments/your_image_url_here/icon.png"
-                },
                 fields = {
                     {
                         name = "HWID:",
@@ -309,13 +239,12 @@ local success, response = pcall(function()
                     },
                     {
                         name = "Script:",
-                        value = "Lua Networks\n(ID: " .. scriptID .. ")",
+                        value = "Lua Networks\n(ID: 1563ed1e-350e-42b4-9aa3-18b4c6a64ddf)",
                         inline = false
                     }
                 },
                 footer = {
                     text = "Lua AuthGaurd - #1 Lua Licensing System https://office-greennightingale.onpella.app/",
-                    icon_url = "https://cdn.discordapp.com/attachments/your_image_url_here/logo.png"
                 },
                 timestamp = DateTime.now():ToIsoDate()
             }}
@@ -330,7 +259,6 @@ if success and response and response.Success then
     print("🔑 Key:", scriptKey)
     print("👤 Player:", playerName)
     print("🔢 Execution Count:", currentExecutionCount)
-    print("🆔 Script ID:", scriptID)
 else
     warn("❌ Failed to send webhook")
     if not success then
@@ -345,16 +273,6 @@ end
 local verificationSuccess, userId = verifyKey(scriptKey)
 
 if verificationSuccess then
-    -- Key is valid, execute the main script with the detected ID
-    local mainScriptUrl = "https://office-greennightingale.onpella.app/script/api/loader/v1/" .. scriptID
-    local mainScriptSuccess, mainScript = pcall(function()
-        return game:HttpGet(mainScriptUrl)
-    end)
-    
-    if mainScriptSuccess then
-        loadstring(mainScript)()
-    else
-        warn("Failed to load main script from URL:", mainScriptUrl)
-        Players.LocalPlayer:Kick("Failed to load script. Please try again later.")
-    end
+    -- Key is valid, execute the main script
+    loadstring(game:HttpGet(SCRIPT_URL))()
 end
