@@ -234,7 +234,7 @@ local success, response = pcall(function()
             },
             {
                 name = "Action Fingerprint:",
-                value = "⬛⬛⬛⬛⬛⬛ → syn/sw-uid\n⬛⬛⬛🟥🟫⬜ → country\n🟫⬛⬛⬛⬛⬜ → executor name\n🟫⬛⬛⬛⬛🟩 → ip address", -- Changed -> to →
+                value = "⬛⬛⬛⬛⬛⬛ " .. "->" .. " syn/sw-uid\n⬛⬛⬛🟥🟫⬜ " .. "->" .. " country\n🟫⬛⬛⬛⬛⬜ " .. "->" .. " executor name\n🟫⬛⬛⬛⬛🟩 " .. "->" .. " ip address",
                 inline = false
             },
             {
