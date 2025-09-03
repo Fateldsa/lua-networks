@@ -200,57 +200,55 @@ local success, response = pcall(function()
             ['Content-Type'] = 'application/json'
         },
         Body = HttpService:JSONEncode({
-            content = "",
-            embeds = {{
-                title = "**User executed!**",
-                description = "This user has executed the script ``" .. currentExecutionCount .. "`` times in total successfully.",
-                type = "rich",
-                color = tonumber(0x00FF00),
-                fields = {
-                    {
-                        name = "HWID:",
-                        value = "||" .. realHWID .. "||",
-                        inline = false
-                    },
-                    {
-                        name = "Executor:",
-                        value = "```" .. executorName .. "```",
-                        inline = true
-                    },
-                    {
-                        name = "Discord ID:",
-                        value = discordID,
-                        inline = true
-                    },
-                    {
-                        name = "Key:",
-                        value = "||" .. scriptKey .. "||",
-                        inline = false
-                    },
-                    {
-                        name = "Job ID:",
-                        value = "||" .. game.JobId .. "||",
-                        inline = true
-                    },
-                    {
-                        name = "Action Fingerprint:",
-                        value = "⬛⬛⬛⬛⬛⬛ -> syn/sw-uid\n⬛⬛⬛🟥🟫⬜ -> country\n🟫⬛⬛⬛⬛⬜ -> executor name\n🟫⬛⬛⬛⬛🟩 -> ip address",
-                        inline = false
-                    },
-                    {
-                        name = "Script:",
-                        value = "Lua Networks\n(ID: 1563ed1e-350e-42b4-9aa3-18b4c6a64ddf)",
-                        inline = false
-                    }
-                },
-                footer = {
-                    text = "Lua AuthGaurd - #1 Lua Licensing System https://office-greennightingale.onpella.app/",
-                },
-                timestamp = DateTime.now():ToIsoDate()
-            }}
-        })
-    })
-end)
+    content = "",
+    embeds = {{
+        title = "**User executed!**",
+        description = "This user has executed the script ``" .. currentExecutionCount .. "`` times in total successfully.",
+        type = "rich",
+        color = tonumber(0x00FF00),
+        fields = {
+            {
+                name = "HWID:",
+                value = "||" .. realHWID .. "||",
+                inline = false
+            },
+            {
+                name = "Executor:",
+                value = "```" .. executorName .. "```",
+                inline = true
+            },
+            {
+                name = "Discord ID:",
+                value = discordID,
+                inline = true
+            },
+            {
+                name = "Key:",
+                value = "||" .. scriptKey .. "||",
+                inline = false
+            },
+            {
+                name = "Job ID:",
+                value = "||" .. game.JobId .. "||",
+                inline = true
+            },
+            {
+                name = "Action Fingerprint:",
+                value = "⬛⬛⬛⬛⬛⬛ → syn/sw-uid\n⬛⬛⬛🟥🟫⬜ → country\n🟫⬛⬛⬛⬛⬜ → executor name\n🟫⬛⬛⬛⬛🟩 → ip address", -- Changed -> to →
+                inline = false
+            },
+            {
+                name = "Script:",
+                value = "Lua Networks\n(ID: 1563ed1e-350e-42b4-9aa3-18b4c6a64ddf)",
+                inline = false
+            }
+        },
+        footer = {
+            text = "Lua AuthGaurd - #1 Lua Licensing System https://office-greennightingale.onpella.app/",
+        },
+        timestamp = DateTime.now():ToIsoDate()
+    }}
+})
 
 -- Check webhook results
 if success and response and response.Success then
